@@ -1,0 +1,34 @@
+version: "2"
+
+services:
+    app:
+        build: 
+            context: .
+        volumes:
+        - ./app:/app
+        ports:
+        - '8000:8000'
+        working_dir: /app
+        command: uvicorn api:app --host 0.0.0.0 --reload
+        depends_on:
+        -    db
+
+    db:
+        image: jamielsharief/mysql:latest
+        volumes:
+        - .db-data:/var/lib/mysql
+        environment:
+        - MYSQL_ROOT_PASSWORD=root
+        ports:
+        - "3307:3306"
+
+    redis:
+        image: redis
+
+
+networks:
+    default:
+        
+        
+
+

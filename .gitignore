@@ -1,0 +1,4 @@
+app/UploadedFiles/**
+.db-data
+**/__pycache__/**
+**/*.pyc
