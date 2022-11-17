@@ -1,18 +1,74 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>METANIT.COM</title>
+    <title>FastAPI</title>
     <meta charset="utf-8">
 </head>
 <body>
     <h2>Форма ввода</h2>
     <form action="/" method="post" enctype='multipart/form-data'>
-        <input type="text" name="text">
+        
         Image:
-        <input name="image" type="file">
+        <input name="image" type="file" id="file" placeholder="Image">
         
         <input type="submit" value="Send">
     </form>
 
+    <div id="load"></div>
+
+    <style>
+        #load {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        margin-top: 10px;
+        }
+
+        #load .load-img {
+        display: block;
+        max-width: 500px;
+        max-height: 500px;
+        margin: 0 5px 5px 0;
+        }
+
+        #load img {
+        display: block;
+        max-width: 100%;
+        max-height: 100%;
+        margin: 0 0 5px;
+        background: #ccc;
+        }
+
+        #load p {
+        display: block;
+        text-align: center;
+        margin: 0;
+        padding: 0;
+        word-break: break-all;
+        }
+    </style>
+
+    <script>
+    let load = document.querySelector('#load');
+
+    document.querySelector('#file').addEventListener('change', function(e) {
+    let tgt = e.target || window.event.srcElement,
+            files = tgt.files;
+
+    load.innerHTML = '';
+
+    if(files && files.length) {
+        for(let i = 0; i < files.length; i++) {
+            let $self = files[i],
+                    fr = new FileReader();
+            fr.onload = function(e) {
+            load.insertAdjacentHTML('beforeEnd', `<div class="load-img"><img src="${e.srcElement.result}"/><p>${$self.name}</p></div>`);
+            }
+            fr.readAsDataURL(files[i]);
+        };
+    }
+    });
+      
+    </script>
 </body>
 </html>
