@@ -1,8 +1,39 @@
 from mysql.connector import connect, Error
-import enum
+from sqlalchemy import create_engine, MetaData, Table, String, Integer, Column, Text, DateTime, Boolean
 
-class Table(enum.Enum):
-    UploadedFiles = "UploadedFiles"
+
+class Tables():
+    class uploadedImagesClass():
+        TableTitle = "uploadedImages"
+
+        ID = "id"
+        UPLOADEDNAME = "uploadedName"
+        SAVEDNAME = "savedName"
+        PATH = "path"
+
+    uploadedImages = uploadedImagesClass
+
+connection = None
+uploadedImages = None
+    
+
+def init_sqlalchemy():
+    engine = create_engine("mysql+mysqlconnector://root:root@db:3306/ml_test")
+    global connection
+    connection = engine.connect()
+    print(engine)
+
+    metadata = MetaData()
+
+    global uploadedImages
+    uploadedImages = Table(Tables.uploadedImages.TableTitle, metadata, 
+    Column(Tables.uploadedImages.ID, Integer(), primary_key=True, autoincrement=True), 
+    Column(Tables.uploadedImages.UPLOADEDNAME, String(200)), 
+    Column(Tables.uploadedImages.SAVEDNAME, String(200)), 
+    Column(Tables.uploadedImages.PATH, String(200))
+    )
+
+    metadata.create_all(engine)
 
 def init_db():
     try:
@@ -12,62 +43,38 @@ def init_db():
             password='root'
         ) as connection:
             create_db_query = "CREATE DATABASE IF NOT EXISTS ml_test"
-            create_table = "CREATE TABLE IF NOT EXISTS UploadedFiles (ID int AUTO_INCREMENT NOT NULL, UploadedName varchar(1000), SavedName varchar(1000), Path varchar(1000), PRIMARY KEY (ID))"
             with connection.cursor() as cursor:
                 cursor.execute(create_db_query)
-                cursor.execute('USE ml_test')
-                cursor.execute(create_table)
+        init_sqlalchemy()
     except Error as e:
         print(e)
 
 def add_to_table(image, name, path):
     try:
-        with connect(
-            host='db',
-            user='root',
-            password='root', 
-            database = 'ml_test'
-        ) as connection:
-            connection.cursor().execute('USE ml_test')
-            connection.cursor().execute(f'INSERT INTO UploadedFiles (UploadedName, SavedName, Path) VALUES ("{image.filename}", "{name}", "{path}")')
-            connection.commit()
+        insert = uploadedImages.insert().values(
+            uploadedName = image.filename,
+            savedName = name,
+            path = path
+        )
+        connection.execute(insert)
     except: 
         init_db()
         add_to_table(image, name, path)
 
-def SelectFromTable(tableName, condition = None, column = "*"):
+def SelectFromTable(name, is_return = False):
 
-    if condition != None:
-        condition = "WHERE " + condition
-    else:
-        condition = ""
-
-    with connect(
-            host='db',
-            user='root',
-            password='root', 
-            database = 'ml_test'
-        ) as connection:
-            with connection.cursor() as cursor:
-                cursor.execute(f"SELECT {column} FROM {tableName} {condition}")
-                for row in cursor:
-                    print(row)
+    select = uploadedImages.select().where(
+        uploadedImages.c.savedName == name
+    )
+    result = connection.execute(select)
+    
+    if is_return:
+        return result
+    
+    print(result.fetchall())
                 
 
-def GetID(tableName, condition):
+def GetID(name):
 
-    if condition != None:
-        condition = "WHERE " + condition
-    else:
-        condition = ""
-
-    with connect(
-            host='db',
-            user='root',
-            password='root', 
-            database = 'ml_test'
-        ) as connection:
-            with connection.cursor() as cursor:
-                cursor.execute(f"SELECT ID FROM {tableName} {condition}")
-                for row in cursor:
-                    return row[0]
+    result = SelectFromTable(name, True)
+    return result.fetchall()[0][0]

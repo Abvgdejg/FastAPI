@@ -25,8 +25,8 @@ def UploadImage(image):
     shutil.copyfileobj(image.file, open(save_path, 'wb'))
 
     mysql.add_to_table(image, save_name, save_path)
-    mysql.SelectFromTable(mysql.Table.UploadedFiles.value, f"SavedName = '{save_name}'")
-    print(mysql.GetID(mysql.Table.UploadedFiles.value, f"SavedName = '{save_name}'"))
+    mysql.SelectFromTable(save_name)
+    print(mysql.GetID(save_name))
 
 app = FastAPI()
  
