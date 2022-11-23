@@ -14,8 +14,15 @@
         <input type="submit" value="Send">
     </form>
 
-    <div id="load"></div>
 
+    <div id="load"></div>
+    {% if status %}
+        <div>
+            <p>Status: {{ status }}</p>
+            <p>Result Link: <a href="{{ link }}">{{ link }}</a></p>
+            <p>Time: {{ ptime }}</p>
+        </div>
+    {% endif %}
     <style>
         #load {
         display: flex;

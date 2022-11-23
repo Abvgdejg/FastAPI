@@ -10,6 +10,8 @@ class Tables():
         UPLOADEDNAME = "uploadedName"
         SAVEDNAME = "savedName"
         PATH = "path"
+        STATUS = 'status'
+        PTIME = 'ptime'
 
     uploadedImages = uploadedImagesClass
 
@@ -30,7 +32,9 @@ def init_sqlalchemy():
     Column(Tables.uploadedImages.ID, Integer(), primary_key=True, autoincrement=True), 
     Column(Tables.uploadedImages.UPLOADEDNAME, String(200)), 
     Column(Tables.uploadedImages.SAVEDNAME, String(200)), 
-    Column(Tables.uploadedImages.PATH, String(200))
+    Column(Tables.uploadedImages.PATH, String(200)),
+    Column(Tables.uploadedImages.STATUS, String(200)), 
+    Column(Tables.uploadedImages.PTIME, String(200)),
     )
 
     metadata.create_all(engine)
@@ -49,17 +53,27 @@ def init_db():
     except Error as e:
         print(e)
 
-def add_to_table(image, name, path):
+def add_to_table(image, name, path, ptime = 'None'):
     
     insert = uploadedImages.insert().values(
         uploadedName = image.filename,
         savedName = name,
-        path = path
+        path = path,
+        status = 'new',
+        ptime = ptime
     )
     connection.execute(insert)
     
 
-def SelectFromTable(name, is_return = False):
+def SelectFromTable(name, id = None, is_return = False):
+
+    if id != None:
+        select = uploadedImages.select().where(
+        uploadedImages.c.id == id
+        )
+        result = connection.execute(select)
+    
+        return result.fetchall()[0]
 
     select = uploadedImages.select().where(
         uploadedImages.c.savedName == name
@@ -71,8 +85,12 @@ def SelectFromTable(name, is_return = False):
     
     print(result.fetchall())
                 
-
+def SelectWithID(id):
+    try:
+        return SelectFromTable(None, id = id)
+    except:
+        return 'Error'
 def GetID(name):
 
-    result = SelectFromTable(name, True)
-    return result.fetchall()[0][0]
+    result = SelectFromTable(name, is_return = True)
+    return result.fetchall()[0].id

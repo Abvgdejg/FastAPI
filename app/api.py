@@ -1,11 +1,14 @@
-from fastapi import FastAPI, File
-from fastapi.responses import FileResponse
+from fastapi import FastAPI, File, Request
+from fastapi.responses import FileResponse, RedirectResponse
 import shutil
 from fastapi import UploadFile
 import mysql_tools as mysql
 import random 
 import string
 import os
+from fastapi.templating import Jinja2Templates
+
+templates = Jinja2Templates(directory="public")
 
 def UploadImage(image):
     letters = string.ascii_letters
@@ -26,19 +29,29 @@ def UploadImage(image):
 
     mysql.add_to_table(image, save_name, save_path)
     mysql.SelectFromTable(save_name)
-    print(mysql.GetID(save_name))
+    return mysql.GetID(save_name)
 
 app = FastAPI()
  
 @app.get("/")
-def root():
-    return FileResponse("public/index.html")
+def root(request: Request, status = None, uploadid = None, ptime = None ):
+    return templates.TemplateResponse("index.html", {'status': status, 'link': f'/result/{uploadid}', 'ptime': ptime, 'request': request})
 
 @app.post("/")
-def postdata(image: UploadFile = File(...)):
-    UploadImage(image)
-    return FileResponse("public/index.html")
-    
+def postdata(request: Request, image: UploadFile = File(...)):
+    uploadid = UploadImage(image)
+    # return templates.TemplateResponse("index.html", {'status': 'New', 'link': f'/result/{uploadid}', 'ptime': 'None', 'request': request}, status_code=303)
+    return RedirectResponse(f'/?status=New&uploadid={uploadid}&ptime=None', status_code=303)
+@app.get('/result/{id}')
+def abab(id: str, request: Request):
+    result = mysql.SelectWithID(int(id))
+    if result == 'Error':
+        return 'Error'
+    path = f'/{result.path}'
+
+    return templates.TemplateResponse("result.html", {"request": request,'img': path})
+
+print(__name__)
 
 if __name__ == "api": 
     mysql.init_db()
