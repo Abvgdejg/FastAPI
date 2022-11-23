@@ -50,16 +50,14 @@ def init_db():
         print(e)
 
 def add_to_table(image, name, path):
-    try:
-        insert = uploadedImages.insert().values(
-            uploadedName = image.filename,
-            savedName = name,
-            path = path
-        )
-        connection.execute(insert)
-    except: 
-        init_db()
-        add_to_table(image, name, path)
+    
+    insert = uploadedImages.insert().values(
+        uploadedName = image.filename,
+        savedName = name,
+        path = path
+    )
+    connection.execute(insert)
+    
 
 def SelectFromTable(name, is_return = False):
 

@@ -25,6 +25,15 @@ services:
     redis:
         image: redis
 
+    nginx:
+        image: nginx
+        ports:
+        - "8888:8888"
+        volumes:
+        - ./nginx/config/:/etc/nginx/conf.d/
+        - ./app:/app
+        depends_on:
+        -    app
 
 networks:
     default:
