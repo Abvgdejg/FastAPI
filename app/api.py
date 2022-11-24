@@ -8,8 +8,6 @@ import string
 import os
 from fastapi.templating import Jinja2Templates
 
-templates = Jinja2Templates(directory="public")
-
 def UploadImage(image):
     letters = string.ascii_letters
 
@@ -31,25 +29,40 @@ def UploadImage(image):
     mysql.SelectFromTable(save_name)
     return mysql.GetID(save_name)
 
-app = FastAPI()
+templates = Jinja2Templates(directory='public')
+
+app = FastAPI(
+
+    title='AnprAPI',
+    description="# API Usage " + '\n ### 1) Post image on site \n ### 2) Get "result_link" from JSON \n ### 3) Get "path" from JSON \n #Просмотр фото: /result/id?UI=1',
+    version='1.0')
  
 @app.get("/")
-def root(request: Request, status = None, uploadid = None, ptime = None ):
-    return templates.TemplateResponse("index.html", {'status': status, 'link': f'/result/{uploadid}', 'ptime': ptime, 'request': request})
+def root():
+
+    return FileResponse('public/index.html')
 
 @app.post("/")
 def postdata(request: Request, image: UploadFile = File(...)):
     uploadid = UploadImage(image)
-    # return templates.TemplateResponse("index.html", {'status': 'New', 'link': f'/result/{uploadid}', 'ptime': 'None', 'request': request}, status_code=303)
-    return RedirectResponse(f'/?status=New&uploadid={uploadid}&ptime=None', status_code=303)
+    print(uploadid)
+    return {'status': 'new', 'result_link': f'/result/{uploadid}', 'estime': 'None'}
+
 @app.get('/result/{id}')
-def abab(id: str, request: Request):
+def result(id: str, request: Request, UI=False):
     result = mysql.SelectWithID(int(id))
     if result == 'Error':
         return 'Error'
     path = f'/{result.path}'
-
-    return templates.TemplateResponse("result.html", {"request": request,'img': path})
+    if UI == '1':
+        return templates.TemplateResponse('result.html', {'request': request, 'img': path})
+    return {"status" : result.status, 
+            "type": "ru-1-1", 
+            "type_conf": 0.9,
+            "number" : "A001AA77", 
+            "number_conf" : 0.87,
+            "estimate" : 0,
+            'path': path}
 
 print(__name__)
 
