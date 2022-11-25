@@ -1,19 +1,9 @@
 from mysql.connector import connect, Error
 from sqlalchemy import create_engine, MetaData, Table, String, Integer, Column, Text, DateTime, Boolean
+#from dotenv import load_dotenv
 
-
-class Tables():
-    class uploadedImagesClass():
-        TableTitle = "uploadedImages"
-
-        ID = "id"
-        UPLOADEDNAME = "uploadedName"
-        SAVEDNAME = "savedName"
-        PATH = "path"
-        STATUS = 'status'
-        PTIME = 'ptime'
-
-    uploadedImages = uploadedImagesClass
+import os
+#oad_dotenv
 
 connection = None
 uploadedImages = None
@@ -28,13 +18,13 @@ def init_sqlalchemy():
     metadata = MetaData()
 
     global uploadedImages
-    uploadedImages = Table(Tables.uploadedImages.TableTitle, metadata, 
-    Column(Tables.uploadedImages.ID, Integer(), primary_key=True, autoincrement=True), 
-    Column(Tables.uploadedImages.UPLOADEDNAME, String(200)), 
-    Column(Tables.uploadedImages.SAVEDNAME, String(200)), 
-    Column(Tables.uploadedImages.PATH, String(200)),
-    Column(Tables.uploadedImages.STATUS, String(200)), 
-    Column(Tables.uploadedImages.PTIME, String(200)),
+    uploadedImages = Table(os.getenv('TableTitle'), metadata, 
+    Column(os.getenv('ID_C'), Integer(), primary_key=True, autoincrement=True), 
+    Column(os.getenv('UPLOADEDNAME_C'), String(200)), 
+    Column(os.getenv('SAVEDNAME_C'), String(200)), 
+    Column(os.getenv('PATH_C'), String(200)),
+    Column(os.getenv('STATUS_C'), String(200)), 
+    Column(os.getenv('PTIME_C'), String(200)),
     )
 
     metadata.create_all(engine)
@@ -42,16 +32,16 @@ def init_sqlalchemy():
 def init_db():
     try:
         with connect(
-            host='db',
-            user='root',
-            password='root'
+            host=os.getenv('DB_HOST'),
+            user=os.getenv('DB_USER'),
+            password=os.getenv('DB_PASSWORD')
         ) as connection:
             create_db_query = "CREATE DATABASE IF NOT EXISTS ml_test"
             with connection.cursor() as cursor:
                 cursor.execute(create_db_query)
         init_sqlalchemy()
     except Error as e:
-        print(e)
+        raise
 
 def add_to_table(image, name, path, ptime = 'None'):
     

@@ -2,7 +2,7 @@ from fastapi import FastAPI, File, Request
 from fastapi.responses import FileResponse, RedirectResponse
 import shutil
 from fastapi import UploadFile
-import mysql_tools as mysql
+import lib.mysql_tools as mysql
 import random 
 import string
 import os
@@ -46,23 +46,27 @@ def root():
 def postdata(request: Request, image: UploadFile = File(...)):
     uploadid = UploadImage(image)
     print(uploadid)
+    print(request.headers)
     return {'status': 'new', 'result_link': f'/result/{uploadid}', 'estime': 'None'}
 
 @app.get('/result/{id}')
-def result(id: str, request: Request, UI=False):
+def result(id: str, request: Request):
     result = mysql.SelectWithID(int(id))
     if result == 'Error':
         return 'Error'
     path = f'/{result.path}'
-    if UI == '1':
-        return templates.TemplateResponse('result.html', {'request': request, 'img': path})
-    return {"status" : result.status, 
-            "type": "ru-1-1", 
-            "type_conf": 0.9,
+    print(request.headers)
+    if request.headers.get('accept') == 'application/json':
+        return {"status" : result.status, 
+            "type" : "ru-1-1", 
+            "type_conf" : 0.9,
             "number" : "A001AA77", 
             "number_conf" : 0.87,
             "estimate" : 0,
             'path': path}
+    
+    return templates.TemplateResponse('result.html', {'request': request, 'img': path})
+    
 
 print(__name__)
 

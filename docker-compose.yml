@@ -12,6 +12,9 @@ services:
         command: uvicorn api:app --host 0.0.0.0 --reload
         depends_on:
         -    db
+        env_file:
+            - .env
+        restart: always
 
     db:
         image: jamielsharief/mysql:latest
