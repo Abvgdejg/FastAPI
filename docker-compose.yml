@@ -16,6 +16,12 @@ services:
             - .env
         restart: always
 
+    ml:
+        image: internatura/ml_machine:v1
+        entrypoint: bash -c "echo 'export OPENBLAS_CORETYPE=ARMV8' >> ~/.bashrc && bash"
+        working_dir: /app
+        runtime: nvidia
+
     db:
         image: jamielsharief/mysql:latest
         volumes:
