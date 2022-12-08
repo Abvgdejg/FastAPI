@@ -1,7 +1,7 @@
 # FastAPI
 
 
- {
+` {
 
 &emsp;  "runtimes": {
 
@@ -18,6 +18,7 @@
 &emsp; "default-runtime": "nvidia"
 
 }
+`
 
 
 
