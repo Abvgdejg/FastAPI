@@ -1,9 +1,9 @@
 # FastAPI
 
 `
- {
+ { `
 
-&emsp;  "runtimes": {
+&emsp;  ` "runtimes": { `
 
 &emsp;&emsp;  "nvidia": {
 
