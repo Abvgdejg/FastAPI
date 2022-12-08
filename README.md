@@ -6,7 +6,8 @@
   > "runtimes": {
   > > "nvidia": {
   > > > "path": "nvidia-container-runtime",
-  > > > "runtimeArgs": 
+  
+  > > > "runtimeArgs": []
   > > }
   > },
   > "default-runtime": "nvidia"
