@@ -1,22 +1,14 @@
 # FastAPI
 
 
-  ` { `
-
-  &ensp; ` "runtimes": { `
-  
-  > > ` "nvidia": { `
-  
-  > > > ` "path": "nvidia-container-runtime", `
-  
-  > > > ` "runtimeArgs": [] `
-  
-  > > ` } `
-  
-  > ` }, `
-  
-  &ensp;` "default-runtime": "nvidia" `
-
-  ` } `
+` { `
+&ensp; ` "runtimes": { `
+&ensp;&ensp; ` "nvidia": { `
+&ensp;&ensp;&ensp; ` "path": "nvidia-container-runtime", `
+&ensp;&ensp;&ensp; ` "runtimeArgs": [] `
+&ensp;&ensp; ` } `
+&ensp; ` }, `
+&ensp;` "default-runtime": "nvidia" `
+` } `
 
 
