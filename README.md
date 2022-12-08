@@ -3,7 +3,7 @@
 
   ` { `
 
-  > ` "runtimes": { `
+  &ensp; ` "runtimes": { `
   
   > > ` "nvidia": { `
   
@@ -15,7 +15,7 @@
   
   > ` }, `
   
-  > ` "default-runtime": "nvidia" `
+  &ensp;` "default-runtime": "nvidia" `
 
   ` } `
 
