@@ -3,10 +3,10 @@
 `
 { 
 > "runtimes": { 
->> "nvidia": { 
->>> "path": "nvidia-container-runtime", 
->>> "runtimeArgs": [] 
->> } 
+> > "nvidia": { 
+> > > "path": "nvidia-container-runtime", 
+> > > "runtimeArgs": [] 
+> > } 
 > }, 
 > "default-runtime": "nvidia" 
 }
