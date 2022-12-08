@@ -1,7 +1,7 @@
 # FastAPI
 
 
- { \n
+ { &#11155;
 &ensp;  "runtimes": { &ltbr&gt;
 &ensp;&ensp;  "nvidia": {&ltbr&gt; 
 &ensp;&ensp;&ensp;  "path": "nvidia-container-runtime", &ltbr&gt;
